@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %} {% endblock %}</title>
+    <style>
+        .message {
+            padding: 10px;
+            margin: 5px;
+            background-color: #f3f3f3
+        }
+        nav{
+            background: #393e46;
+            text-align: right;
+        }
+        nav a {
+            color: #f96d00;
+            font-size: 2em;
+            margin-right: 50px;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="{{ url_for('hello') }}">Home</a>
+        <a href="{{ url_for('user_form') }}">Form</a>
+        <a href="#">Asynchronous Form</a>
+    </nav>
+    <hr>
+    <div class="content">
+        {% block content %} {% endblock %}
+    </div>
+</body>
+</html>
