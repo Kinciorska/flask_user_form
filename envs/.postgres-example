@@ -1,0 +1,4 @@
+POSTGRES_USER=flask_user
+POSTGRES_PASSWORD=example
+POSTGRES_DATABASE=flask_db
+HOST=localhost
