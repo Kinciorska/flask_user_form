@@ -1,10 +1,6 @@
 # Flask User Form App
 
-This application is created to save user information in Flask using both synchronous and asynchronous requests. 
-
-## Features
-
- **Synchronous and asynchronous form submission**
+This application is created to save user information in Flask using both synchronous and asynchronous requests using celery + redis. 
 
 
 ## Getting Started
@@ -39,13 +35,25 @@ Environment files should be located in .envs directory, examples of these enviro
     ``` 
    python init_db.py
     ```
-4. Run the app
+4. Run Redis Stack in Docker
+    ``` 
+   docker run -d --name redis-stack-server -p 6379:6379 redis/redis-stack-server:7.2.0-v10
+    ```
+5. Run the app
     ``` 
    python app.py
     ```
+   
+6. Start celery workers (N - worker number)
+   ``` 
+   celery -A app.celery worker --loglevel=INFO --concurrency=10 -n workerN@%h
+    ```
+   
 ### Technologies
 - Flask
 - PostgreSQL
+- Redis
+- Celery
 
 
 #### License

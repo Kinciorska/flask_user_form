@@ -102,6 +102,7 @@ __pypackages__/
 # Environments
 envs/.flask
 envs/.postgres
+envs/.redis
 .venv
 env/
 venv/
