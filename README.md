@@ -7,18 +7,12 @@ This application is created to save user information in Flask using both synchro
 
 Follow these steps to build and run the app.
 
-### Clone the repository:
-
-   ```bash
-   git clone https://github.com/Kinciorska/warehouse.git
-   ```
-### Build the Docker Image:
 
 Needed environment files:
 
 - .flask
-
 - .postgres
+- .redis
 
 Environment files should be located in .envs directory, examples of these environment files are available in the same directory.
  
@@ -41,7 +35,7 @@ Environment files should be located in .envs directory, examples of these enviro
     ```
 5. Run the app
     ``` 
-   python app.py
+   flask run
     ```
    
 6. Start celery workers (N - worker number)
