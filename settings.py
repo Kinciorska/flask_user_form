@@ -1,59 +1,53 @@
 import os
 import psycopg2
 
-from celery import Celery, Task
+from celery import Celery
 from dotenv import load_dotenv
 from flask import Flask
-
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 
+# Rabbitmq settings
+
+RABBITMQ_ENV_DIR = os.path.join(BASE_DIR, 'envs/.rabbitmq')
+
+load_dotenv(RABBITMQ_ENV_DIR)
+
+PROTOCOL = os.getenv('RABBITMQ_PROTOCOL')
+USER = os.getenv('RABBITMQ_USER')
+PASSWORD = os.getenv('RABBITMQ_PASSWORD')
+HOST = os.getenv('RABBITMQ_HOST')
+PORT = os.getenv('RABBITMQ_PORT')
+VHOST = os.getenv('RABBITMQ_DEFAULT_VHOST')
+
+
 # Celery settings
-def celery_init_app(app: Flask):
-    class FlaskTask(Task):
-        def __call__(self, *args: object, **kwargs: object):
-            with app.app_context():
-                return self.run(*args, **kwargs)
 
-    celery_app = Celery(app.name)
-    celery_app.config_from_object(app.config["CELERY"])
-    celery_app.Task = FlaskTask
+CELERY_BROKER_URL = f"{PROTOCOL}://{USER}:{PASSWORD}@{HOST}:{PORT}"
 
-    return celery_app
+celery_app = Celery(
+    'tasks',
+    broker=CELERY_BROKER_URL,
+    backend='rpc://'
+)
 
+celery_app.autodiscover_tasks()
 
-# Redis settings
-REDIS_ENV_DIR = os.path.join(BASE_DIR, 'envs/.redis')
-
-load_dotenv(REDIS_ENV_DIR)
-
-REDIS_PROTOCOL = os.getenv('REDIS_PROTOCOL')
-REDIS_HOST = os.getenv('REDIS_HOST')
-REDIS_PORT = os.getenv('REDIS_PORT')
-REDIS_DB_NUMBER = os.getenv('REDIS_DB_NUMBER')
+__all__ = ('celery_app',)
 
 
 # Flask settings
+
 FlASK_ENV_DIR = os.path.join(BASE_DIR, 'envs/.flask')
 
 load_dotenv(FlASK_ENV_DIR)
 
-SECRET_KEY = os.getenv('SECRET_KEY')
-CELERY_BROKER_URL = f'{REDIS_PROTOCOL}://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB_NUMBER}'
-CELERY_RESULT_BACKEND = f'{REDIS_PROTOCOL}://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB_NUMBER}'
-
-
 app = Flask(__name__)
+
+SECRET_KEY = os.getenv('SECRET_KEY')
+
 app.config['SECRET_KEY'] = SECRET_KEY
-app.config.from_mapping(
-    CELERY=dict(
-        broker_url=CELERY_BROKER_URL,
-        result_backend=CELERY_RESULT_BACKEND,
-        task_ignore_result=True,
-    ),
-)
-celery_app = celery_init_app(app)
 
 
 # PostgreSQL settings
@@ -65,6 +59,6 @@ load_dotenv(POSTGRES_ENV_DIR)
 connection = psycopg2.connect(
         host=os.getenv('POSTGRES_HOST'),
         database=os.getenv('POSTGRES_DATABASE'),
-        user=os.getenv('POSTGRES_USER'),
-        password=os.getenv('POSTGRES_PASSWORD')
+        user=os.getenv('POSTGRES_NON_ROOT_USER'),
+        password=os.getenv('POSTGRES_NON_ROOT_PASSWORD')
 )

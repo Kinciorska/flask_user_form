@@ -102,7 +102,7 @@ __pypackages__/
 # Environments
 envs/.flask
 envs/.postgres
-envs/.redis
+envs/.rabbitmq
 .venv
 env/
 venv/

@@ -99,7 +99,7 @@ def async_user_form():
     form = UserForm(request.form)
     if form.validate() and phone_validated(form.data):
         messages.clear()
-        async_create_user_data(form.data)
+        async_create_user_data.delay(form.data)
         return redirect('/')
     context = {'form': form,
                'messages': messages}
