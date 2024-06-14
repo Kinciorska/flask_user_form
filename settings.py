@@ -34,7 +34,8 @@ celery_app = Celery(
 
 celery_app.autodiscover_tasks()
 
-__all__ = ('celery_app',)
+__all__ = ('celery_app',
+           'app')
 
 
 # Flask settings
