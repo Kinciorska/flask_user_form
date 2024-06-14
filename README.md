@@ -15,7 +15,7 @@ git clone https://github.com/Kinciorska/flask_user_form.git
 
 ### Change into the correct directory
 ```
-cd whitefly_1
+cd flask_user_form
 ```
 
 ### Build the Docker Image:
@@ -30,15 +30,15 @@ Environment files should be located in .envs directory, examples of these enviro
  
 Build and run the Docker container using
 ```
-docker-compose up
+docker compose up
 ```
 ### Initialize the db
 ``` 
-docker-compose run flask python init_db.py
+docker compose run flask python init_db.py
 ```
 ### Start Celery worker (N - worker number)
 ``` 
-docker-compose run flask celery -A app.celery worker --loglevel=INFO --concurrency=10 -n workerN@%h
+docker compose run flask celery -A app.celery worker --loglevel=INFO --concurrency=10 -n workerN@%h
 ```
    
 ### Technologies

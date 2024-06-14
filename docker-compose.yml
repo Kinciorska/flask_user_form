@@ -22,7 +22,7 @@ services:
 
   flask:
     build: .
-    command: gunicorn --bind 0.0.0.0 wsgi:app
+    command: gunicorn --bind 0.0.0.0:5000 app:app
     volumes:
       - .:/code
     ports:
