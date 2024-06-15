@@ -25,6 +25,11 @@ def hello():
     return render_template('index.html')
 
 
+@app.route("/loaderio-166ff5155dc0082fb8ac9ea1fec10f3d")
+def verify_loader():
+    return 'loaderio-166ff5155dc0082fb8ac9ea1fec10f3d'
+
+
 def phone_validated(data):
     phone_number = data['phone']
     try:
@@ -107,4 +112,4 @@ def async_user_form():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
