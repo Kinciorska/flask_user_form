@@ -2,7 +2,7 @@ import celery
 import phonenumbers
 
 from celery import shared_task
-from flask import render_template, request, redirect
+from flask import render_template, request, redirect, send_from_directory
 from flask_bcrypt import Bcrypt
 from flask_wtf.csrf import CSRFProtect
 
@@ -25,9 +25,9 @@ def hello():
     return render_template('index.html')
 
 
-@app.route("/loaderio-166ff5155dc0082fb8ac9ea1fec10f3d")
-def verify_loader():
-    return 'loaderio-166ff5155dc0082fb8ac9ea1fec10f3d'
+@app.route("/<path:filename>")
+def verify_loader(filename):
+    return send_from_directory(app.static_folder, filename)
 
 
 def phone_validated(data):
@@ -60,9 +60,6 @@ def create_user_data(data):
 
     connection.commit()
 
-    cursor.close()
-    connection.close()
-
 
 @app.route("/user_form", methods=('GET', 'POST'))
 def user_form():
@@ -94,9 +91,6 @@ def async_create_user_data(data):
                    )
 
     connection.commit()
-
-    cursor.close()
-    connection.close()
 
 
 @app.route("/async_user_form", methods=('GET', 'POST'))

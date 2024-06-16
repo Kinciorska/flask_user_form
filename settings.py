@@ -43,7 +43,7 @@ FlASK_ENV_DIR = os.path.join(BASE_DIR, 'envs/.flask')
 
 load_dotenv(FlASK_ENV_DIR)
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static')
 
 SECRET_KEY = os.getenv('SECRET_KEY')
 

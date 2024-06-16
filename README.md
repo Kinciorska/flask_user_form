@@ -38,7 +38,7 @@ docker-compose run flask python init_db.py
 ```
 ### Start Celery worker (N - worker number)
 ``` 
-docker-compose run flask celery -A app.celery worker --loglevel=INFO --concurrency=10 -n workerN@%h
+docker-compose run flask celery -A app.celery worker --loglevel=INFO --concurrency=2 --autoscale=10,1 -n workerN@%h
 ```
    
 ### Technologies
