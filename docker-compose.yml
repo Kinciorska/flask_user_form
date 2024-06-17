@@ -22,7 +22,8 @@ services:
 
   flask:
     build: .
-    command: flask run --host 0.0.0.0
+    command: gunicorn --bind 0.0.0.0:5000 app:app
+    # command: gunicorn -k gevent --bind 0.0.0.0:5000 app:app # async deployment
     volumes:
       - .:/code
     ports:
