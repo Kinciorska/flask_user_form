@@ -30,11 +30,11 @@ Environment files should be located in .envs directory, examples of these enviro
  
 Build and run the Docker container using
 ```
-docker compose up
-```
-### Initialize the db
+ docker compose up -d --build   
+ ```
+### Create the db
 ``` 
-docker compose run flask python init_db.py
+docker compose exec flask python manage.py create_db
 ```
 ### Start Celery worker (N - worker number, C - CPU core number)
 ``` 
