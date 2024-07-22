@@ -11,6 +11,8 @@ FROM python:${PYTHON_VERSION}-slim as builder
 RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
+RUN apt-get update && apt-get install -y netcat-traditional
+
 RUN pip install --upgrade pip
 COPY ./requirements.txt .
 RUN pip install -r requirements.txt
@@ -25,7 +27,7 @@ ENV PYTHONDONTWRITEBYTECODE=1
 # the application crashes without emitting any logs due to buffering.
 ENV PYTHONUNBUFFERED=1
 
-WORKDIR /code
+WORKDIR /usr/src/app
 
 COPY --from=builder /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
@@ -36,4 +38,4 @@ USER nonroot
 
 EXPOSE 5000
 
-COPY . /code/
+COPY . /usr/src/app

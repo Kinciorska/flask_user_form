@@ -1,7 +1,8 @@
-POSTGRES_NON_ROOT_USER=flask_user
-POSTGRES_NON_ROOT_PASSWORD=password
-POSTGRES_DATABASE=flask_db
+POSTGRES_USER=example
+POSTGRES_PASSWORD=example
+POSTGRES_DB=flask_db_dev
 POSTGRES_HOST=postgres
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=password
-POSTGRES_DB=postgres
+POSTGRES_PORT=5432
+DATABASE_URL=postgresql://example:example@postgres:5432/flask_db_dev
+PGUSER=example
+DATABASE=postgres

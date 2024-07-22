@@ -1,23 +1,28 @@
-import celery
 import phonenumbers
 
 from celery import shared_task
-from flask import render_template, request, redirect
+from flask import render_template, request, redirect, jsonify
 from flask_bcrypt import Bcrypt
 from flask_wtf.csrf import CSRFProtect
 
+from flaskr import app, db
+from .worker import phone_validated_task, async_create_user_data_task
 
-from settings import app, connection
-from forms import UserForm
+from .forms import UserForm
+from .db import User
 
 
 bcrypt = Bcrypt(app)
-
 
 csrf = CSRFProtect(app)
 
 
 messages = []
+
+
+@app.route("/test/")
+def hello_world():
+    return jsonify(hello="world")
 
 
 @app.route("/")
@@ -38,8 +43,6 @@ def phone_validated(data):
 
 
 def create_user_data(data):
-    cursor = connection.cursor()
-
     username = data['username']
     first_name = data['first_name']
     last_name = data['last_name']
@@ -47,19 +50,17 @@ def create_user_data(data):
     email = data['email']
     password = data['password']
     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-
-    cursor.execute('INSERT INTO user_info (username, first_name, last_name, phone, email, password)'
-                   'VALUES (%s, %s, %s, %s, %s, %s)',
-                   (username, first_name, last_name, phone, email, hashed_password)
-                   )
-
-    connection.commit()
-
-    cursor.close()
-    connection.close()
+    new_user = User(username=username,
+                    first_name=first_name,
+                    last_name=last_name,
+                    phone=phone,
+                    email=email,
+                    password=hashed_password)
+    db.session.add(new_user)
+    db.session.commit()
 
 
-@app.route("/user_form", methods=('GET', 'POST'))
+@app.route("/user_form/", methods=('GET', 'POST'))
 def user_form():
     form = UserForm(request.form)
     if form.validate() and phone_validated(form.data):
@@ -71,40 +72,13 @@ def user_form():
     return render_template('user_form.html', **context)
 
 
-@shared_task
-def async_create_user_data(data):
-    cursor = connection.cursor()
-
-    username = data['username']
-    first_name = data['first_name']
-    last_name = data['last_name']
-    phone = data['phone']
-    email = data['email']
-    password = data['password']
-    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-
-    cursor.execute('INSERT INTO user_info (username, first_name, last_name, phone, email, password)'
-                   'VALUES (%s, %s, %s, %s, %s, %s)',
-                   (username, first_name, last_name, phone, email, hashed_password)
-                   )
-
-    connection.commit()
-
-    cursor.close()
-    connection.close()
-
-
-@app.route("/async_user_form", methods=('GET', 'POST'))
+@app.route("/async_user_form/", methods=('GET', 'POST'))
 def async_user_form():
     form = UserForm(request.form)
-    if form.validate() and phone_validated(form.data):
+    if form.validate() and phone_validated_task.delay(form.data):
         messages.clear()
-        async_create_user_data.delay(form.data)
+        async_create_user_data_task.delay(form.data)
         return redirect('/')
     context = {'form': form,
                'messages': messages}
     return render_template('async_user_form.html', **context)
-
-
-if __name__ == "__main__":
-    app.run(debug=True)

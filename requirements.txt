@@ -2,6 +2,7 @@ Celery==5.4.0
 Flask==3.0.3
 flask-bcrypt==1.0.1
 Flask-WTF==1.2.1
+Flask-SQLAlchemy==3.0.3
 gunicorn==22.0.0
 gevent==24.2.1
 phonenumbers==8.13.37
